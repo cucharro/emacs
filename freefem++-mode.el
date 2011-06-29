@@ -4,7 +4,7 @@
 ;; Author:     2008-2011 Rafael Rodríguez Galván
 ;; Maintainer: Rafael Rodríguez Galván
 ;; Created:    September 2008
-;; Version:    0.21
+;; Version:    0.3
 ;; Based on:   D programming language mode for (X)Emacs, by William Baxter
 ;; Keywords:   FreeFem++ finite element programming language emacs cc-mode
 
