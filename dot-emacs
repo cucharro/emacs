@@ -1,0 +1,974 @@
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(LaTeX-csquotes-close-quote "«")
+ '(LaTeX-csquotes-open-quote "»")
+ '(TeX-PDF-mode t)
+ '(TeX-master (quote dwim))
+ '(TeX-source-correlate-method (quote auto))
+ '(TeX-source-correlate-mode t)
+ '(TeX-source-correlate-start-server t)
+ '(TeX-view-program-list (quote (("Okular" "okular --unique %o#src:%n%b"))))
+ '(TeX-view-program-selection (quote ((output-pdf "Okular") ((output-dvi style-pstricks) "dvips and gv") (output-dvi "xdvi") (output-pdf "Evince") (output-html "xdg-open"))))
+ '(browse-url-browser-function (quote browse-url-firefox))
+ '(canlock-password "673f48913a5003a51686b2a908b51668fbc2f4ef")
+ '(column-number-mode t)
+ '(mingus-bookmarks (quote (("BWV 82 'Ich habe genug' 2 Recitative 'Ich habe genug'" (file "cucharro-musica/Bach/Bach_Cantatas_Vol.3_S.Kuijken_Flac_Booklet (ST)/JS Bach_S. Kuijken - Cantatas for the complete liturgical year, vol. 3.flac" position 66)) ("Pista 5" (file "Albums/Mozart/Concierto para Violín en Re Mayor/05 - Pista 5.flac" psosition 182)))))
+ '(mingus-mpd-host "127.0.0.1")
+ '(org-agenda-files (quote ("~/Documentos/Org/gtd.org" "~/Documentos/Org/docencia.org" "~/Documentos/Org/investig.org")))
+ '(sc-fixup-whitespace-p t)
+ '(sc-reference-tag-string ">>> ")
+ '(show-paren-mode t)
+ '(tex-close-quote "«")
+ '(tex-open-quote "»")
+ '(text-mode-hook (quote (turn-on-auto-fill text-mode-hook-identify)))
+ '(transient-mark-mode t))
+
+;;; Restore various variables from last session (cursor point and others)
+;; (when (require 'session nil t)
+;;   (add-hook 'after-init-hook 'session-initialize)
+;;   (add-to-list 'session-globals-exclude 'org-mark-ring))
+(require 'saveplace)
+(setq-default save-place t)
+
+;; Usar el portapapeles para cortar/pegar (integración con otros programas)
+(setq x-select-enable-clipboard t)
+
+;; Replace yes/no by y/n
+(fset 'yes-or-no-p 'y-or-n-p) 
+
+; When on a tab, make the cursor the tab length
+;(setq-default x-stretch-cursor t)
+
+;; Al escribir, alejar del cursor el puntero del ratón
+(mouse-avoidance-mode 'cat-and-mouse)
+
+;; Soporte para paquetes locales en $HOME
+(setq user-site-lisp (cons (expand-file-name "~/.emacs.d/site-lisp")
+		      load-path))
+(setq load-path user-site-lisp)
+
+;; ;; recent files
+;; ;; (Deshabilitados, prefiero el modo anything)
+;; (require 'recentf)
+;; (recentf-mode 1)
+;; (setq recentf-max-menu-items 35)
+;; (global-set-key (kbd "\C-x r") 'recentf-open-files)
+;; ;(setq recentf-save-file "~/.emacs.d/recentf")
+
+;; interfaz subversion para emacs.
+(require 'psvn)
+
+;; git version control
+(global-set-key (kbd "C-c g s") 'magit-status)
+
+(require 'bazaar)
+(add-hook 'find-file-hooks 'bzr-maybe-activate)
+
+; Varias combinaciones de teclas
+(global-set-key [\C-tab] 'dabbrev-expand) ;Auto expand to preceding words
+;(global-set-key [?\S-tab] 'maxima-complete) ; Super (win) Key + tab
+(global-set-key (quote [s-tab]) (quote maxima-complete))
+(global-set-key (kbd "M-g") 'goto-line)
+(global-set-key (kbd "C-c c") 'compile)
+(global-set-key (kbd "C-c s") 'svn-status)
+(global-set-key (kbd "C-c M M") 'menu-bar-mode)
+(global-set-key (kbd "C-c M T") 'tool-bar-mode)
+(global-set-key (kbd "C-c M m") 'menu-bar-mode)
+(global-set-key (kbd "C-c M t") 'tool-bar-mode)
+(global-set-key (kbd "C-x g") 'gnus)
+(global-set-key [f1] 'help-for-help) 
+(global-set-key [\C-return] 'newline-and-indent)
+
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (turn-on-auto-fill)
+            (setq fill-column 80)
+            (setq comment-column 60)
+;            (modify-syntax-entry ?_ "w")  ; now '_' is not considered a word-delimiter
+;            (c-set-style "whitesmith")  ; set indentation style
+;            (c-set-style "gnu")         ; indentation style ("gnu" is the default one)
+;            (local-set-key [return] 'newline-and-indent)
+            ))
+
+;; scroll one line at a time
+(defun scroll-one-line-up (&optional arg)
+  "Scroll the selected window up (forward in the text) one line (or N lines)."
+  (interactive "p")
+  (scroll-up (or arg 1)))
+(defun scroll-one-line-down (&optional arg)
+  "Scroll the selected window down (backward in the text) one line (or N)."
+  (interactive "p")
+  (scroll-down (or arg 1)))
+;; Bind these functions (substitute your favorite keys for mine)
+;; (global-set-key "\M-v" 'scroll-one-line-up)
+;; (global-set-key "\C-b" 'scroll-one-line-up)
+;; (global-set-key "\C-v"  'scroll-one-line-down)
+(global-set-key [S-down] 'scroll-one-line-up)
+(global-set-key [S-up]  'scroll-one-line-down)
+
+;; Enhanced C-x b
+(require 'iswitchb)
+(iswitchb-default-keybindings)
+;(require 'iswitch-menu)
+
+;; Print to Cups-PDF printer
+(setq ps-printer-name t)
+(setq lpr-switches '("-PPDF"))
+
+
+;;
+;; gestión de temas
+;;
+
+(set-default-font "-*-DejaVu Sans Mono-*-*-*-*-20-*-*-*-*-*-*")
+;(set-default-font "12x24")
+;(set-default-font "10x20")
+;(set-default-font "9x15")
+;(set-default-font "-*-courier-medium-r-*-*-16-*-*-*-*-*-*-*")
+
+
+(if window-system
+    (progn      
+      (color-theme-initialize)
+      (color-theme-gtk-ide)
+      ;; (color-theme-vim-colors) ; Black on wite
+;;      (color-theme-rotor); Black on white
+;;       (color-theme-sitaramv-nt) ; Black on white, lot of oranges
+;;      (color-theme-high-contrast) ; Black on white high contrast
+;;       (color-theme-charcoal-black)
+;;       (color-theme-clarity)
+;;       (color-theme-simple-1) ; White on black
+;      (color-theme-arjen) ; White on black, gnus support
+;;       (color-theme-sitaramv-solaris); White on black
+;;       (color-theme-emacs-21); Default theme
+;;      (set-face-font 'menu "-*-courier-medium-r-*-*-12-*-*-*-*-*-*-*")
+;;      (set-face-font 'default "-*-courier-medium-r-*-*-24-*-*-*-*-*-*-*")
+;;      (set-face-font 'default "-*-fixed-medium-r-*-*-32-*-*-*-*-*-iso8859-15")
+;;;       (setq default-frame-alist '(
+;;;                                   (width . 132) 
+;;;                                   (height . 48) 
+;;;                                   (top . 43)  pixels
+;;;                                   (left . 103) pixels
+;;;                                         (font . "6x12")
+;;;                                         (cursor-type . bar)
+;;;                                   ))
+      (set-face-italic-p 'font-lock-comment-face t) ; comms en italiques      
+
+      (defun x11-maximize-frame ()
+	"Maximize the current frame (to full screen)"
+	(interactive)
+	(x-send-client-message nil 0 nil "_NET_WM_STATE" 32 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
+	(x-send-client-message nil 0 nil "_NET_WM_STATE" 32 '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0)))
+      ;; Maximizar emacs al inicio
+      ;; Poner la barra de desplazamiento a la derecha...
+      ;;(set-scroll-bar-mode 'right)
+      ;; ...aunque mejor quitarla, que la barra de scroll es para cobardes :-)
+      ;; ...y también son de cobardes la barra de iconos y los menús :-)
+      ;;(tool-bar-mode 0) ;; pero mejor, en ~/.Xresources,  Emacs*toolBar: 0
+      ;; (set-scroll-bar-mode nil)
+      ;; (menu-bar-mode 0)
+      (x11-maximize-frame)
+      ))
+
+;;
+;; Python
+;;
+
+;; ipython in emacs (ipython.el downloaded from the web)
+;(require 'ipython)
+
+;;
+;; LaTeX
+;; 
+
+;; Use LaTeX-mode for empty .tex files
+(setq TeX-force-default-mode nil)
+
+;; DVI reverse search specials
+(server-start)
+;(global-set-key [(control f4)]  'server-start)
+(add-hook 'server-switch-hook 'raise-frame)
+
+;; RefTeX
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex) 
+(add-hook 'LaTeX-mode-hook 'turn-on-auto-fill) 
+
+;; ;; cdlatex, http://staff.science.uva.nl/~dominik/Tools/cdlatex/
+;; (autoload 'cdlatex-mode "cdlatex" "CDLaTeX Mode" t)
+;; (autoload 'turn-on-cdlatex "cdlatex" "CDLaTeX Mode" nil)
+;; (add-hook 'LaTeX-mode-hook 'turn-on-cdlatex)   ; with AUCTeX LaTeX mode
+
+;; Redefine TeX-next-error, to solve icicles problem: (C-c `) overwritting
+(global-set-key (kbd "C-c n")'TeX-next-error)
+
+;; Flyspell in LaTeX
+(setq flyspell-issue-message-flag nil)
+
+(add-hook 'text-mode-hook
+          '(lambda () (flyspell-mode t)))
+; No hace falta especificar el diccionario, aspell lo toma por defecto
+; (flyspell-change-dictionary "castellano8")
+
+;; Diccionario español en LaTeX
+;; (ispell-change-dictionary "castellano8")
+;; (setq flyspell-default-dictionary "castellano8")
+(global-set-key (kbd "C-c C-i C-s")
+		'(lambda () (interactive)
+		   (ispell-change-dictionary "castellano8")
+;		   (flyspell-buffer)
+		   ))
+
+(global-set-key (kbd "C-c C-i C-e")
+		'(lambda () (interactive)
+		   (ispell-change-dictionary "english")
+;		   (flyspell-buffer)
+		   ))
+
+;; Old viewing method!...
+;;(setq TeX-output-view-style (quote (("^pdf$" "." "evince %o") ("^dvi$" "." "evince %o") ("^ps$" "." "evince %o"))))
+;;(setq TeX-output-view-style (quote (("^pdf$" "." "okular %o") ("^dvi$" "." "okular %o") ("^ps$" "." "okular %o"))))
+
+;; ;; Texto restructurado
+;; (setq auto-mode-alist
+;;       (cons '("\\.rst$" . rst-mode) auto-mode-alist))
+
+;; Asymptote mode (script-based vector graphics language)
+;(setq load-path (cons (expand-file-name "/usr/local/share/asymptote/")
+;		      load-path))
+;(require 'asy-mode)
+
+;; ;;
+;; ;; Software científico: Octave, maxima
+;; ;;
+
+;;Octave mode
+(autoload 'octave-mode "octave-mod" nil t)
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+(add-hook 'octave-mode-hook
+          (lambda ()
+	    (abbrev-mode 1)
+            (auto-fill-mode 1)
+            (if (eq window-system 'x)
+                (font-lock-mode 1))))
+
+;;Maxima mode
+(when (locate-library "maxima")
+;  (setq auto-mode-alist (cons '("\\.mac" . maxima-mode) auto-mode-alist))
+  (add-to-list 'auto-mode-alist '("\\.mac$" . maxima-mode))
+  (add-to-list 'auto-mode-alist '("\\.max$" . maxima-mode))
+  (autoload 'maxima "maxima" "Running Maxima interactively" t)
+  (autoload 'maxima-mode "maxima" "Maxima editing mode" t))
+  
+;;Imaxima!
+(when (locate-library "imaxima")
+  (autoload 'imaxima "imaxima" "Image support for Maxima." t)
+  (setq imaxima-pt-size 12
+        imaxima-fnt-size "Large"
+        imaxima-use-maxima-mode-flag (locate-library "maxima"))
+)
+
+;; ;;;
+;; ;;; Mathematica :-(
+;; ;;;
+;; ;; (require 'mathematica)
+;; ;; (add-to-list 'auto-mode-alist '("\\.ma$" . mathematica-mode) auto-mode-alist)
+;; ;; (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode) auto-mode-alist)
+
+;; ;; 
+;; ;; Folding (hiding blocks)
+;; ;;
+
+;; (load "folding" 'nomessage 'noerror)
+;; ;; (folding-mode-add-find-file-hook)
+;; (global-set-key (kbd "C-c C-f C-f") 'folding-toggle-show-hide)
+;; (global-set-key (kbd "C-c C-f C-<up>") 'folding-previous-visible-heading)
+;; (global-set-key (kbd "C-c C-f C-<down>") 'folding-next-visible-heading)
+;; (global-set-key (kbd "C-c C-f <up>") 'folding-previous-visible-heading)
+;; (global-set-key (kbd "C-c C-f <down>") 'folding-next-visible-heading)
+;; (global-set-key (kbd "C-c C-f C-p") 'folding-previous-visible-heading)
+;; (global-set-key (kbd "C-c C-f C-n") 'folding-next-visible-heading)
+;; (global-set-key (kbd "C-c C-f C-w") 'folding-whole-buffer)
+;; (global-set-key (kbd "C-c C-f C-a") 'folding-open-buffer)
+;; (folding-add-to-marks-list 'ff++-mode "//{"  "//}"  nil t)
+;; (folding-add-to-marks-list 'c++-mode "//{"  "//}"  nil nil)
+;; (folding-add-to-marks-list 'AUCTeX "%{"  "%}"  nil t)
+
+
+;;
+;; FreeFemm++
+;;
+(autoload 'freefem++-mode "freefem++-mode" "Major mode for editing FreeFem++ code." t)
+(add-to-list 'auto-mode-alist '("\\.edp$" . freefem++-mode))
+(add-to-list 'auto-mode-alist '("\\.idp$" . freefem++-mode))
+(add-to-list 'auto-mode-alist '("\\.tdp$" . freefem++-mode))
+
+;; ;;
+;; ;; sqlite
+;; ;;
+
+;; (setq sql-product "sqlite")
+;; (setq sql-sqlite-program "sqlite3")
+
+;;
+;; org-capture
+;;
+
+(setq org-directory "/home/cucharro/Documentos/Org/")
+;(setq org-default-notes-file (concat org-directory "notes.org"))
+(define-key global-map "\C-coc" 'org-capture)
+
+(setq org-capture-templates 
+(quote (
+("a" "Appointment" entry (file+headline 
+"/home/cucharro/Documentos/Org/taskdiary.org" "Calendar")
+"* APPT %^{Description} %^g
+%?
+Added: %U")
+
+("n" "Notes" entry (file+datetree 
+"/home/cucharro/Documentos/Org/taskdiary.org")
+"* %^{Description} %^g %? 
+Added: %U") 
+
+("t" "Task Diary" entry (file+datetree 
+"/home/cucharro/Documentos/Org/taskdiary.org")
+"* TAREA %^{Description}  %^g
+%?
+Added: %U") 
+
+("i" "Investigation Journal" entry (file+datetree 
+"/home/cucharro/Documentos/Org/invesjournal.org")
+"** %^{Heading}")
+
+("l" "Log Time" entry (file+datetree 
+"/home/cucharro/Documentos/Org/timelog.org")
+"** %U - %^{Activity}  :TIME:")
+)))
+
+;;
+;; Remember mode
+;;
+
+(setq org-reverse-note-order t)  ;; note at beginning of file by default.
+(setq org-default-notes-file "~/gtd.org")
+(setq remember-annotation-functions '(org-remember-annotation))
+(setq remember-handler-functions '(org-remember-handler))
+(add-hook 'remember-mode-hook 'org-remember-apply-template)
+(setq org-remember-templates
+      '((?t "* TAREA %?\n  %i\n  %a" "~/Documentos/Org/gtd.org")
+	(?c "* Cita:%? %^T\n %a" "~/Documentos/Org/gtd.org")
+        (?o "* %?\n%^T\n%i\n  %a" "~/Documentos/Org/gtd.org" )))
+;; (eval-after-load 'remember
+;;   '(add-hook 'remember-mode-hook 'org-remember-apply-template))
+(global-set-key (kbd "C-c o r") 'remember)
+
+(setq diary-file "~/.emacs.d/diary")
+(add-hook 'list-diary-entries-hook 'sort-diary-entries t)
+
+;;;
+;;; calendar
+;;;
+;;(european-calendar)
+
+;;; local
+(defvar andalusian-holidays
+  '((holiday-fixed 1 1 "Año nuevo")
+    (holiday-fixed 1 6 "Reyes Magos")
+    (holiday-fixed 5 1 "Día de los trabajdores")
+    (holiday-fixed 10 7 "Día del Rosario")
+    (holiday-fixed 10 12 "Día de la Hispanidad")
+    (holiday-fixed 12 8 "Día de la Inmaculada")
+    (holiday-fixed 12 25 "Navidad"))
+  "Vacaciones Andaluzas")
+
+(setq-default
+ calendar-holidays andalusian-holidays
+ calendar-latitude 36.53
+ calendar-longitude -6.29
+ calendar-location-name "Cadiz, es"
+ calendar-week-start-day 1              ; La semana compienza el lunes
+ european-calendar-style t              ; Fecha: día/mes/año
+ mark-diary-entries-in-calendar t
+ mark-holidays-in-calendar t
+ view-calendar-holidays-initially t
+ view-diary-entries-initially   t)
+(setq calendar-day-name-array
+      ["Domingo" "Lunes" "Martes" 
+       "Miércoles" "Jueves" "Viernes" "Sábado"]
+      calendar-month-name-array
+      ["Enero" "Febrero" "Marzo" "Abril"
+       "Mayo" "Junio" "Julio" "Agosto" "Septiembre"
+       "Octubre" "Noviembre" "Diciembre"])
+ ;; (defvar calendar-day-abbrev-array
+ ;;  ["dom" "lun" "mar" "mie" "jue" "vie" "sáb"])
+ ;; (defvar calendar-day-name-array
+ ;;   ["domingo" "lunes" "martes" "miércoles" "jueves" "viernes" "sábado"])
+ ;; (defvar calendar-month-abbrev-array
+ ;;   ["ene" "feb" "mar" "abr" "may" "jun"
+ ;;    "jul" "ago" "sep" "oct" "nov" "dic"])
+ ;; (defvar calendar-month-name-array
+ ;;   ["enero" "febrero" "marzo" "abril" "mayo" "junio"
+ ;;    "julio" "agosto" "septiembre" "octubre" "noviembre" "diciembre"])
+
+;;
+;; Org mode
+;;
+
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/site-lisp/org-mode/lisp"))
+(require 'org)
+
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(setq org-hide-leading-stars t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Org + beamer slides
+;; (require 'org-latex)
+
+;; tell org to use listings
+(setq org-export-latex-listings t)
+;; you must include the `listings' package
+(add-to-list 'org-export-latex-packages-alist '("" "listings"))
+
+;; ;; Define @string@ -> \alert{string}
+;; (add-to-list 'org-emphasis-alist '("@" org-warning "<i>" "</i>"))
+;; (add-to-list 'org-export-latex-emphasis-alist '("@" "\\alert{%s}" nil))
+
+
+(global-set-key (kbd "C-c o a") 'org-agenda)
+;(global-set-key (kbd "C-c o v") 'org-agenda-view-mode-dispatch)
+(global-set-key (kbd "C-c o o") 
+		'(lambda () (interactive) (find-file "~/Documentos/Org/gtd.org")))
+(global-set-key (kbd "C-c o n")
+		'(lambda () (interactive) (find-file "~/Documentos/Org/notas.org")))
+(global-set-key (kbd "C-c o d")
+		'(lambda () (interactive) (find-file "~/Documentos/Org/docencia.org")))
+(global-set-key (kbd "C-c o i")
+		'(lambda () (interactive) (find-file "~/Documentos/Org/investig.org")))
+(global-set-key (kbd "C-c o s")
+		'(lambda () (interactive) (find-file "~/Documentos/Org/osluca.org")))
+(global-set-key (kbd "C-c o t")
+		'(lambda () (interactive) (find-file "~/Documentos/Org/tmp.org")))
+(global-set-key (kbd "C-c o m")
+		'(lambda () (interactive) (find-file "~/Documentos/Org/musica.org")))
+
+;; org todos
+;(setq org-todo-keywords '("TODO" "STARTED" "WAITING" "DONE"))
+(setq org-todo-keywords '("TAREA" "COMENZADO" "ESPERANDO" "HECHO"))
+;;; If you would like a TODO entry to automatically change to DONE
+;;; when all children are done, you can use the following setup:
+(defun org-summary-todo (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "HECHO" "TAREA"))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+(setq org-agenda-include-diary t)
+;(setq org-agenda-include-all-to)
+
+;(add-hook 'org-mode-hook (lambda() (flyspell-mode 1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; For org appointment reminders
+
+;; Get appointments for today
+(defun my-org-agenda-to-appt ()
+  (interactive)
+  (setq appt-time-msg-list nil)
+  (let ((org-deadline-warning-days 0))    ;; will be automatic in org 5.23
+        (org-agenda-to-appt)))
+
+;; Run once, activate and schedule refresh
+(my-org-agenda-to-appt)
+(appt-activate t)
+(run-at-time "24:01" nil 'my-org-agenda-to-appt)
+
+; 5 minute warnings
+(setq appt-message-warning-time 15)
+(setq appt-display-interval 5)
+
+; Update appt each time agenda opened.
+(add-hook 'org-finalize-agenda-hook 'my-org-agenda-to-appt)
+
+; Setup zenify, we tell appt to use window, and replace default function
+(setq appt-display-format 'window)
+(setq appt-disp-window-function (function my-appt-disp-window))
+
+(defun my-appt-disp-window (min-to-app new-time msg)
+  (save-window-excursion (shell-command (concat
+    "/usr/bin/zenity --info --title='Appointment' --text='"
+    msg "' &") nil nil)))
+
+;; ;; ;;; The following code clocks in whenever you market task is started,
+;; ;; ;;; and clocks out when you market a task as WAITING. It also
+;; ;; ;;; automatically market task is started if you clock in.
+;; ;; ;;; Thanks http://sachachua.com/wp/2007/12/30/clocking-time-with-emacs-org/
+;; ;; (eval-after-load 'org
+;; ;;   '(progn
+;; ;;      (defun wicked/org-clock-in-if-starting ()
+;; ;;        "Clock in when the task is marked STARTED."
+;; ;;        (when (and (string= state "STARTED")
+;; ;; 		  (not (string= last-state state)))
+;; ;; 	 (org-clock-in)))
+;; ;;      (add-hook 'org-after-todo-state-change-hook
+;; ;; 	       'wicked/org-clock-in-if-starting)
+;; ;;      (defadvice org-clock-in (after wicked activate)
+;; ;;       "Set this task's status to 'STARTED'."
+;; ;;       (org-todo "STARTED"))
+;; ;;     (defun wicked/org-clock-out-if-waiting ()
+;; ;;       "Clock out when the task is marked WAITING."
+;; ;;       (when (and (string= state "WAITING")
+;; ;;                  (equal (marker-buffer org-clock-marker) (current-buffer))
+;; ;;                  (< (point) org-clock-marker)
+;; ;; 	         (> (save-excursion (outline-next-heading) (point))
+;; ;; 		    org-clock-marker)
+;; ;; 		 (not (string= last-state state)))
+;; ;; 	(org-clock-out)))
+;; ;;     (add-hook 'org-after-todo-state-change-hook
+;; ;; 	      'wicked/org-clock-out-if-waiting)))
+
+
+;; ;;; Al abrir emacs, mostrar la agenda
+;; (setq inhibit-startup-screen t)
+;; ;(setq inhibit-splash t)
+
+;; (org-agenda-list)
+
+;; ;; Active Babel languages (org-mode literate programming)
+;; (org-babel-do-load-languages
+;;  'org-babel-load-languages
+;;  '((python . t)
+;;    (octave . t)
+;;    (C . t)
+;;    (emacs-lisp . t)
+;;    ))
+
+
+;; ;;
+;; ;; BBDB database
+;; ;;
+
+(setq bbdb-file "~/.emacs.d/bbdb")        ;; keep ~/ clean; set before loading
+(setq bbdb-north-american-phone-numbers-p nil)
+(autoload 'bbdb         "bbdb-com" "Insidious Big Brother Database" t)
+
+;; (setq 
+;;     bbdb-offer-save 1                        ;; 1 means save-without-asking
+    
+;;     bbdb-use-pop-up t                        ;; allow popups for addresses
+;;     bbdb-electric-p t                        ;; be disposable with SPC
+;;     bbdb-popup-target-lines  1               ;; very small
+    
+;;     bbdb-dwim-net-address-allow-redundancy t ;; always use full name
+;;     bbdb-quiet-about-name-mismatches 2       ;; show name-mismatches 2 secs
+
+;;     bbdb-always-add-address t                ;; add new addresses to existing...
+;;                                              ;; ...contacts automatically
+;;     bbdb-canonicalize-redundant-nets-p t     ;; x@foo.bar.cx => x@bar.cx
+
+;;     bbdb-completion-type nil                 ;; complete on anything
+
+;;     bbdb-complete-name-allow-cycling t       ;; cycle through matches
+;;                                              ;; this only works partially
+
+;;     bbbd-message-caching-enabled t           ;; be fast
+;;     bbdb-use-alternate-names t               ;; use AKA
+
+;;     bbdb-elided-display t                    ;; single-line addresses
+
+;;     ;; auto-create addresses from mail
+;;     bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook   
+;;     bbdb-ignore-some-messages-alist ;; don't ask about fake addresses
+;;     ;; NOTE: there can be only one entry per header (such as To, From)
+;;     ;; http://flex.ee.uec.ac.jp/texi/bbdb/bbdb_11.html
+
+;;     '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter"))
+;; )
+
+;; ;; (require 'bbdb)
+;; ;; (bbdb-initialize)
+;; ;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+;; ;; (add-hook 'mail-setup-hook 'bbdb-insinuate-sendmail)
+;; ;; (setq bbdb-north-american-phone-numbers-p nil)
+
+;; ;;
+;; ;; Interfaz to Google Calendar and Google Data Api
+;; ;;
+;; ;; (add-to-list 'load-path "/home/cucharro/.emacs.d/site-lisp/g-client")
+;; ;; (load-library "g")
+;; ;; (setq g-user-email "cucharro@gmail.com")
+;; ;; ;(setq g-user-email "vtiid.softwarelibre@cal.uca.es")
+;; ;; (setq g-html-handler 'w3m-goto-url)
+;; ;; (custom-set-faces
+;; ;;   ;; custom-set-faces was added by Custom.
+;; ;;   ;; If you edit it by hand, you could mess it up, so be careful.
+;; ;;   ;; Your init file should contain only one such instance.
+;; ;;   ;; If there is more than one, they won't work right.
+;; ;;  )
+
+
+;; ;;
+;; ;; W3M
+;; ;;
+;; (load "~/.emacs.d/w3m-local.el")
+
+;; ;;
+;; ;; Dictem: acceso a diccionarios de servidores DICT
+;; ;; 
+;; (load "~/.emacs.d/dictem-local.el")
+
+
+;;
+;; Mingus for music (interacting with MPD) !
+;;
+(add-to-list 'load-path "~/.emacs.d/site-lisp/mingus")
+(autoload 'mingus "mingus")
+(autoload 'mingus "mingus-stays-home")
+(global-set-key (kbd "C-c m m") 'mingus)          ; Start mingus
+(global-set-key (kbd "C-c m +") 'mingus-vol-up)
+(global-set-key (kbd "C-c m -") 'mingus-vol-down)
+(global-set-key (kbd "C-c m p") 'mingus-toggle)   ; Toggle play/pause
+(global-set-key (kbd "C-c m i") 
+		'(lambda () (interactive) (mingus-get-songs "currentsong")))
+		
+
+;; ;;
+;; ;; EMMS
+;; ;;
+;; ;; (setq emms-site-lisp (cons (expand-file-name "~/Program/emacs/emms/emms/lisp")
+;; ;;  		      load-path))
+;; ;; (setq load-path emms-site-lisp)
+;; ;; (load "~/.emacs.d/emms-local.el")
+;; ;; (load "~/.emacs.d/emms-thierry-mpd.el")
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Icicles: enhance minibuffer completion
+;;
+
+;; (require 'icicles)
+;; (icy-mode 1)
+;; (global-set-key (kbd "C-x r") 'icicle-recent-file)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Anything
+;;
+
+(load "~/.emacs.d/my-anything.el")
+
+;; (custom-set-faces
+;;   ;; custom-set-faces was added by Custom.
+;;   ;; If you edit it by hand, you could mess it up, so be careful.
+;;   ;; Your init file should contain only one such instance.
+;;   ;; If there is more than one, they won't work right.
+;;  '(font-latex-bold-face ((((class color) (background light)) (:inherit bold :weight bold))))
+;;  '(twit-message-face ((t nil))))
+
+;; ;; wanderlust
+;; (global-set-key (kbd "C-x m") 'wl)
+
+;; ;; Twitter --------------------------------------------------
+
+;; ;; ;; ((1)) twittter (twitter.el)
+
+;; ;; (autoload 'twitter-get-friends-timeline "twitter" nil t)
+;; ;; (autoload 'twitter-status-edit "twitter" nil t)
+;; ;; (global-set-key (kbd "C-x t") 'twitter-get-friends-timeline)
+;; ;; (add-hook 'twitter-status-edit-mode-hook 'longlines-mode)
+
+;; ;; ((2)) twitter (twit.el)
+
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/twit")  ; Save directory
+
+;; ;; Define M-x commands
+
+;; (autoload 'twit-show-recent-tweets	"twit" "" t) ; most recent direct tweets (!)
+;; (autoload 'twit-show-at-tweets		"twit" "" t) ; directed to you
+;; (autoload 'twit-show-friends 		"twit" "" t) ; your friends
+;; (autoload 'twit-show-followers 		"twit" "" t) ; your followers
+
+;; (autoload 'twit-follow-recent-tweets	"twit" "" t) ; at idle, check at background
+
+;; (autoload 'twit-post			"twit" "" t)
+;; (autoload 'twit-post-region		"twit" "" t)
+;; (autoload 'twit-post-buffer		"twit" "" t)
+;; (autoload 'twit-direct			"twit" "" t) ; tweet to person
+
+;; (autoload 'twit-add-favorite		"twit" "" t) ; Add to favourite: (*) star
+;; (autoload 'twit-remove-favorite 	"twit" "" t)
+
+;; (autoload 'twit-add-friend  		"twit" "" t) ; follow a friend
+;; (autoload 'twit-remove-friend 		"twit" "" t) ; emove a frienda
+
+;; ;; Customize twit-multi-accounts in order to use these: ((user . pass) ...)
+;; (autoload 'twit-switch-account 		"twit" "" t)
+;; (autoload 'twit-direct-with-account  	"twit" "" t)
+;; (autoload 'twit-post-with-account 	"twit" "" t)
+
+;; (autoload 'twit-show-direct-tweets-with-account "twit" "" t)
+;; (autoload 'twit-show-at-tweets-with-account 	"twit" "" t)
+
+;; ;; Customizations
+
+;; (setq twit-user "cucharro")
+;; ;;(setq twit-pass "pass")
+
+;; (setq 
+;;  twit-show-user-images t
+;;  twit-user-image-dir "~/.emacs.d/tmp")
+
+;; ;; Key bindings examples
+;; ;; Requires that autoloads above have been added to ~/.emacs
+
+;; (global-set-key "\C-cTT"  'twit-follow-recent-tweets) ; (s)how (T)weets
+;; (global-set-key "\C-cTst" 'twit-follow-recent-tweets) ; (s)how (t)weets
+;; (global-set-key "\C-cTsa" 'twit-show-at-tweets)       ; (s)how (a)t
+;; (global-set-key "\C-cTsf" 'twit-show-at-tweets)       ; (s)how (f)riends
+;; (global-set-key "\C-cTsl" 'twit-show-at-tweets)       ; (s)how fo(l)lowers
+
+;; (global-set-key "\C-cTpp" 'twit-post)		      ; (p)ost
+;; (global-set-key "\C-cTpr" 'twit-post-region)	      ; (p)post (r)egion
+;; (global-set-key "\C-cTpb" 'twit-post-buffer)	      ; (p)post (b)uffer
+;; (global-set-key "\C-cTpr" 'twit-direct)		      ; (p)post (d)irect
+;; (global-set-key "\C-cTfa" 'twit-add-favorite)	      ; (f)avorite (a)dd
+;; (global-set-key "\C-cTfr" 'twit-remove-favorite)      ; (f)avorite (r)emove
+
+;; ;;; Update your timeline each 120 seconds (2 minutes)
+;; (setq twit-follow-idle-interval 120)
+
+;; ;;; Show pop-up message at new tweets
+;; (add-hook 'twit-new-tweet-hook 
+;; 	  (lambda ()
+;; 	    (show-popup "New tweets" "You have %d new tweets" 
+;; 			 "/usr/share/pixmaps/gnome-emacs.png")))
+
+;; ;; ;; ((3)) twittering-mode
+
+;; ;; (add-to-list 'load-path ".emacs.d/site-lisp/twittering-mode") ;; if you need
+;; ;; (require 'twittering-mode)
+;; ;; (setq twittering-username "cucharro")
+
+;; ;; (twittering-icon-mode)                       ; Show icons (requires wget)
+;; ;; (setq twittering-timer-interval 300)         ; Update your timeline each 300 seconds (5 minutes)
+;; ;; (setq twittering-tmp-dir "/.emacs.d/tmp") ; Directory to store buddy icons
+
+;; ;; (add-hook 'twittering-mode-hook
+;; ;; 	  (lambda ()
+;; ;; 	    (local-set-key "f" 'twittering-friends-timeline)
+;; ;; 	    (local-set-key "r" 'twittering-replies-timeline)
+;; ;; 	    (local-set-key "u" 'twittering-user-timeline)
+;; ;; 	    (local-set-key "w" 'twittering-update-status-interactive)))
+
+;; ;; (add-hook 'twittering-new-tweets-hook (lambda ()
+;; ;;    (let ((n twittering-new-tweets-count))
+;; ;;      (start-process "twittering-notify" nil "notify-send"
+;; ;;                     "-i" "/usr/share/pixmaps/gnome-emacs.png"
+;; ;;                     "New tweets"
+;; ;;                     (format "You have %d new tweet%s"
+;; ;;                             n (if (> n 1) "s" ""))))))
+
+;; ;; haskell-mode
+;; (load "haskell-site-file")
+
+;; ;; Wikipedia
+;; (autoload 'wikipedia-mode "wikipedia-mode.el"
+;;   "Major mode for editing documents in Wikipedia markup." t)
+;; (add-to-list 'auto-mode-alist
+;; 	     '("\\.wiki\\'" . wikipedia-mode))
+;; (add-to-list 'auto-mode-alist
+;; 	     '("itsalltext.*\\.txt$" . wikipedia-mode))
+
+;; ;; ¿Necesito lo siguiente, no está ya?
+;; ;; (setq text-mode-hook 
+;; ;;       (quote (#[nil "\300\301!\207" [flyspell-mode 1] 2] 
+;; ;; 	      flyspell-buffer text-mode-hook-identify)))
+
+;;
+;;  Use google translate api to perform translations
+;;
+(require 'gtranslate)
+(defun gtranslate-en-es ()
+     (interactive)
+     (gtranslate-translate (gtranslate-region-or-input) "en" "es"))
+(defun gtranslate-es-en ()
+     (interactive)
+     (gtranslate-translate (gtranslate-region-or-input) "es" "en"))
+(defun gtranslate-fr-es ()
+     (interactive)
+     (gtranslate-translate (gtranslate-region-or-input) "fr" "es"))
+(defun gtranslate-es-fr ()
+     (interactive)
+     (gtranslate-translate (gtranslate-region-or-input) "es" "fr"))
+
+(global-set-key (kbd "C-c t e") 'gtranslate-es-en)
+(global-set-key (kbd "C-c t s") 'gtranslate-en-es)
+
+;; ;; wget
+;; (setq wget-download-directory "/tmp")
+
+
+;; ;; See http://emacs-fu.blogspot.com/2009/11/showing-pop-ups.html
+;; (defun show-popup (title msg &optional icon sound)
+;;   "Show a popup if we're on X, or echo it otherwise; TITLE is the title
+;; of the message, MSG is the context. Optionally, you can provide an ICON and
+;; a sound to be played"
+;;   (interactive)
+;;   (when sound (shell-command
+;;                 (concat "mplayer -really-quiet " sound " 2> /dev/null")))
+;;   (if (eq window-system 'x)
+;;       (shell-command (concat "notify-send "
+;; 			     (if icon (concat "-i " icon) "")
+;; 			     " '" title "' '" msg "'"))
+;;     ;; text only version
+;;     (message (concat title ": " msg))))
+
+;; ;;; Count words
+;; ;;; http://iquaid.org/2008/02/08/counting-words-in-emacs/
+;; (defun count-words-region (beginning end)
+;;   "Print number of words in the region.
+;; Words are defined as at least one word-constituent
+;; character followed by at least one character that
+;; is not a word-constituent.  The buffer's syntax
+;; table determines which characters these are."
+;;   (interactive "r")
+;;   (message "Counting words in region ... ")
+
+;; ;;; 1. Set up appropriate conditions.
+;;   (save-excursion
+;;     (goto-char beginning)
+;;     (let ((count 0))
+
+;; ;;; 2. Run the while loop.
+;;       (while (< (point) end)
+;;         (re-search-forward "\\w+\\W*")
+;;         (setq count (1+ count)))
+
+;; ;;; 3. Send a message to the user.
+;;       (cond ((zerop count)
+;;              (message
+;;               "The region does NOT have any words."))
+;;             ((= 1 count)
+;;              (message
+;;               "The region has 1 word."))
+;;             (t
+;;              (message
+;;               "The region has %d words." count))))))
+
+;; ;;
+;; ;; Ctrl+Alt-8 -> Select current word / line / etc
+;; ;;
+
+
+;; ;; by Nikolaj Schumacher, 2008-10-20. Released under GPL.
+;; (defun semnav-up (arg)
+;;   (interactive "p")
+;;   (when (nth 3 (syntax-ppss))
+;;     (if (> arg 0)
+;;         (progn
+;;           (skip-syntax-forward "^\"")
+;;           (goto-char (1+ (point)))
+;;           (decf arg))
+;;       (skip-syntax-backward "^\"")
+;;       (goto-char (1- (point)))
+;;       (incf arg)))
+;;   (up-list arg))
+
+;; ;; by Nikolaj Schumacher, 2008-10-20. Released under GPL.
+;; (defun extend-selection (arg &optional incremental)
+;;   "Select the current word.
+;; Subsequent calls expands the selection to larger semantic unit."
+;;   (interactive (list (prefix-numeric-value current-prefix-arg)
+;;                      (or (and transient-mark-mode mark-active)
+;;                          (eq last-command this-command))))
+;;   (if incremental
+;;       (progn
+;;         (semnav-up (- arg))
+;;         (forward-sexp)
+;;         (mark-sexp -1))
+;;     (if (> arg 1)
+;;         (extend-selection (1- arg) t)
+;;       (if (looking-at "\\=\\(\\s_\\|\\sw\\)*\\_>")
+;;           (goto-char (match-end 0))
+;;         (unless (memq (char-before) '(?\) ?\"))
+;;           (forward-sexp)))
+;;       (mark-sexp -1))))
+
+;; (global-set-key (kbd "M-8") 'extend-selection)
+
+;; ;; Jekyll publishing
+;; ;;(require 'org-jekyll)
+;; (when (locate-library "org-jekill")
+;;   (autoload 'org-jekill "org-jekill" "Running Org-Jekill" t))
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; imenu
+;; ;;
+;; (global-set-key (kbd "C-c i") 'imenu) 
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; Auto-install
+;; (require 'auto-install)
+
+;; ;;; This was installed by package-install.el.
+;; ;;; This provides support for the package system and
+;; ;;; interfacing with ELPA, the package archive.
+;; ;;; Move this code earlier if you want to reference
+;; ;;; packages in your .emacs.
+;; (when
+;;     (load
+;;      (expand-file-name "~/.emacs.d/elpa/package.el"))
+;;   (package-initialize))
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; Configure hippie expand: [TAB] -> (1) yasnippet (2) -> smart-tab
+;; ;; Idea obtainded from https://gist.github.com/215930
+
+;; ; Yasnippet
+;; (require 'yasnippet)
+
+;; ;; ;; Change the default hippie-expand order and add yasnippet to the front.
+;; ;; (setq hippie-expand-try-functions-list
+;; ;;       '(yas/hippie-try-expand
+;; ;;         try-expand-dabbrev
+;; ;;         try-expand-dabbrev-all-buffers
+;; ;;         try-expand-dabbrev-from-kill
+;; ;;         try-complete-file-name
+;; ;;         try-complete-lisp-symbol
+;; ;;         lisp-indent-line
+;; ;; ))
+
+;; ;; Helps when debugging which try-function expanded
+;; ;(setq hippie-expand-verbose t)
+
+;; ;; Smart Tab
+
+;; (defvar smart-tab-using-hippie-expand t
+;;   "turn this on if you want to use hippie-expand completion.")
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; YASnippet
+
+;; (require 'yasnippet) ;; not yasnippet-bundle
+;; (yas/initialize)
+
+;; ;; Replace yasnippets's TAB
+;; ;; (add-hook 'yas/minor-mode-hook
+;; ;;           (lambda () (define-key yas/minor-mode-map
+;; ;;                        (kbd "TAB") 'smart-tab))) ; was yas/expand
+
+;; ;; Develop and keep personal snippets under ~/emacs.d/mysnippets
+;; (setq yas/root-directory "~/.emacs.d/mysnippets")
+
+;; ;; Load the snippets
+;; (yas/load-directory yas/root-directory)
+
+;; ;; (menu-bar-mode -1)
+;; ;; (tool-bar-mode -1)
+;; ;; (tooltip-mode -1)
+;; ;; (scroll-bar-mode 1)
+
