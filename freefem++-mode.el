@@ -1,8 +1,8 @@
 ;;; freefem++-mode.el --- FreeFem++ Programming Language mode for (X)Emacs
 ;;;               Requires a cc-mode of version 5.30 or greater
 
-;; Author:     2008-2011 Rafael Rodríguez Galván
-;; Maintainer: Rafael Rodríguez Galván
+;; Author:     2008-2011 J. Rafael Rodríguez Galván
+;; Maintainer: J. Rafael Rodríguez Galván
 ;; Created:    September 2008
 ;; Version:    0.3
 ;; Based on:   D programming language mode for (X)Emacs, by William Baxter
