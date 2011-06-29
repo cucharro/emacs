@@ -39,6 +39,10 @@
 ;;   * Build a help on freefem++-mode
 ;;
 ;; History:
+;;   * 2011 June 29 - Released version 0.3
+;;      Changelog:
+;;         - Mode is renamed from ff++-mode to freefem++-mode
+;;         - Uploaded to github (https://github.com/cucharro/emacs/blob/master/freefem++-mode.el)
 ;;   * 2011 February 10 - Released version 0.29
 ;;      Changelog:
 ;;         - FreeFem++ is executed as an asynchronous process
